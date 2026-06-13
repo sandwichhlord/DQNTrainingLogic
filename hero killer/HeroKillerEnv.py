@@ -223,7 +223,9 @@ class HeroKillerEnv:
             # --- SANDBAG LOGIC (Difficulty 1) ---
             elif self.difficulty == 1:
                 threat_detected = p_atk2 and distance < 120
-                if threat_detected:
+                if distance > self.width * 4:
+                    self.bot_state = "APPROACH" 
+                elif threat_detected:
                      self.bot_state = "DEFEND"
                 elif distance < 60: # Self defense only
                      self.bot_state = "ATTACK"
@@ -236,7 +238,7 @@ class HeroKillerEnv:
                 if threat_detected and random.random() > self.ERROR_RATE:
                     if not self.block_cd_active1: self.bot_state = "DEFEND"
                     else: self.bot_state = "PANIC_JUMP"
-                elif distance > self.width * 3:
+                elif distance > 1.2*self.width:
                     self.bot_state = "APPROACH"
                 elif distance < 1.5 * self.width and not p_atk2:
                     if random.random() > self.ERROR_RATE: self.bot_state = "ATTACK"

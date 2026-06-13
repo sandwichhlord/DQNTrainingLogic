@@ -31,21 +31,22 @@ class DQNAgent:
     def __init__(self, state_size, action_size, training_mode=True):
         self.state_size = state_size
         self.action_size = action_size
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         
         # Hyperparameters (The "Tuning Knobs")
-        self.memory = deque(maxlen=50000) # Replay Buffer capacity
+        self.memory = deque(maxlen=2000) # Replay Buffer capacity
         self.gamma = 0.95    # Discount rate (How much we care about future rewards)
         if training_mode:
             self.epsilon = 1.0   # Exploration rate (1.0 = 100% Random at start)
         else:
             self.epsilon = 0.01   # Low exploration for watching the AI
         self.epsilon_min = 0.01 # Minimum exploration (1% random eventually)
-        self.epsilon_decay = 0.997 # How fast we stop being random
-        self.learning_rate = 0.001
+        self.epsilon_decay = 0.995 # How fast we stop being random
+        self.learning_rate = 0.0001
         self.batch_size = 64 # How many memories to learn from at once
  
         # Initialize the Brain
-        self.model = DQN(state_size, action_size)
+        self.model = DQN(state_size, action_size).to(self.device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss() # Loss function (Mean Squared Error)
 
@@ -67,7 +68,7 @@ class DQNAgent:
             return random.choices(action_indices, weights=weights, k=1)[0]
         
         # EXPLOITATION (Use the Brain)
-        state_tensor = torch.FloatTensor(state).unsqueeze(0)
+        state_tensor = torch.FloatTensor(state).unsqueeze(0).to(self.device)
         with torch.no_grad():
             q_values = self.model(state_tensor)
         
@@ -80,18 +81,18 @@ class DQNAgent:
     def replay(self):
         # TRAINING STEP (The "Dreaming" Phase)
         if len(self.memory) < self.batch_size:
-            return # Not enough memories yet
+            return None # Not enough memories yet
 
         # 1. Sample a random batch of memories
         minibatch = random.sample(self.memory, self.batch_size)
         
         # 2. Prepare the data
         # We process the whole batch at once for speed
-        states = torch.FloatTensor(np.array([i[0] for i in minibatch]))
-        actions = torch.LongTensor([i[1] for i in minibatch])
-        rewards = torch.FloatTensor([i[2] for i in minibatch])
-        next_states = torch.FloatTensor(np.array([i[3] for i in minibatch]))
-        dones = torch.FloatTensor([i[4] for i in minibatch])
+        states = torch.FloatTensor(np.array([i[0] for i in minibatch])).to(self.device)
+        actions = torch.LongTensor([i[1] for i in minibatch]).to(self.device)
+        rewards = torch.FloatTensor([i[2] for i in minibatch]).to(self.device)
+        next_states = torch.FloatTensor(np.array([i[3] for i in minibatch])).to(self.device)
+        dones = torch.FloatTensor([i[4] for i in minibatch]).to(self.device)
 
         # 3. Calculate Target Q-Values (The "Truth")
         # Formula: Reward + (Gamma * Max_Q(next_state))
@@ -109,6 +110,9 @@ class DQNAgent:
         self.optimizer.zero_grad() # Clear old gradients
         loss.backward()            # Calculate new gradients
         self.optimizer.step()      # Update weights
+
+        # Return the loss value to track it in main.py
+        return loss.item()
         
     def update_epsilon(self):
         # We call this ONLY at the end of a match
@@ -117,5 +121,5 @@ class DQNAgent:
     
     def load(self, name):
         # Load the weights from the file into the Neural Network
-        self.model.load_state_dict(torch.load(name))
+        self.model.load_state_dict(torch.load(name, map_location=self.device))
         print(f"Brain loaded from {name}")

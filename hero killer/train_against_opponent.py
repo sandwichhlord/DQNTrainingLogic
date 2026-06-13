@@ -31,19 +31,16 @@ def main():
     
     print(f"--- HERO KILLER: TRAINING STARTED [Difficulty: {DIFFICULTY}] ---")
     
-    # 1. INITIALIZE ENVIRONMENT
     env = HeroKillerEnv(training_mode=TRAINING, render_mode=RENDER, difficulty=DIFFICULTY)
     
-    # 2. INITIALIZE BRAIN
     state_size = 10
     action_size = 6
     agent = DQNAgent(state_size, action_size, training_mode=TRAINING)
     scores_per_difficulty = {0: [], 1: [], 2: [], "SELF-PLAY": []}
 
     opponent_agent = DQNAgent(state_size, action_size, training_mode=False) 
-    opponent_agent.epsilon = 0.05 # Opponent stays mostly consistent
+    opponent_agent.epsilon = 0.05 # opponent stays mostly consistent
     
-    # 3. LOAD
     if LOAD_MODEL:
         try:
             agent.load(MODEL_PATH)
@@ -68,7 +65,6 @@ def main():
         FPS = 300
     # FPS = FPS
 
-    # --- TRAINING LOOP ---
     for e in range(EPISODES):
 
         is_self_play = random.random() < selfplayProbability
@@ -77,9 +73,9 @@ def main():
             # mma
             dice = random.random()
             if dice < 0.60:
-                current_difficulty = 1
-            elif dice < 0.80:
                 current_difficulty = 0
+            elif dice < 0.80:
+                current_difficulty = 1
             else:
                 current_difficulty = 2
 
@@ -125,9 +121,6 @@ def main():
                 env.render()
                 clock.tick(FPS)
         
-        # --- EPISODE FINISHED ---
-        
-        # Decay Epsilon (Once per episode, not per frame!)
         agent.update_epsilon()
 
 
@@ -139,7 +132,7 @@ def main():
             print("Updating Self-Play Opponent to latest model weights...")
             opponent_agent.model.load_state_dict(agent.model.state_dict())
 
-        # SAVE CHECKPOINT (Every 50 episodes)
+        # SAVE CHECKPOINT every 50 episodes
         if (e + 1) % 50 == 0:
             save_name = f"herokiller_dqn_{e+1}.pth"
             torch.save(agent.model.state_dict(), save_name)
@@ -169,7 +162,7 @@ def main():
                 f.write(f"{score}\n")
             f.write("\n")
             
-    # CLEAN EXIT
+    # EXIT
     print("Training Finished.")
     pygame.quit()
     sys.exit()
