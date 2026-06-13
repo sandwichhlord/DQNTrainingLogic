@@ -6,7 +6,7 @@ An advanced 2D fighting game environment with an integrated Deep Q-Network (DQN)
 ![Pygame](https://img.shields.io/badge/Pygame-Environment-green)
 
 
-<video src="demo/model_gameplay.mp4" controls="controls" muted="muted" autoplay="autoplay" width="800"></video>
+https://github.com/user-attachments/assets/3f84428d-fbb8-4f39-bafa-aea65d396100
 *(Gameplay of me against the trained model)*
 
 ## System Architecture
@@ -14,10 +14,11 @@ An advanced 2D fighting game environment with an integrated Deep Q-Network (DQN)
 * **League Training Matchmaking:** Implemented a dynamic training curriculum where the agent fights against a mixed pool of hardcoded bots, chaotic random agents, and historical snapshots of itself (Ghosts) to prevent policy cycling.
 * **Behavioral Cloning:** Bypassed reward sparsity by utilizing supervised Imitation Learning, mapping expert human/bot states to discrete actions.
 
-<video src="demo/model_training_against_opponent.mp4" controls="controls" muted="muted" autoplay="autoplay" width="800"></video>
+https://github.com/user-attachments/assets/5ae1b8ff-a6f1-4eba-9e31-e331a507562a
 *(The model learning how to play in the environment)*
 
-<video src="demo/model_training_on_opponent.mp4" controls="controls" muted="muted" autoplay="autoplay" width="800"></video>
+
+https://github.com/user-attachments/assets/80d4076e-d6a0-407b-9567-316e4a94bab4
 *(The model learning how to play based on an expert bots movements, i.e., behavioral cloning)*
 
 ## Quick Start
