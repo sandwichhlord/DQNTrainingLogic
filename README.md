@@ -7,6 +7,7 @@ An advanced 2D fighting game environment with an integrated Deep Q-Network (DQN)
 
 
 https://github.com/user-attachments/assets/3f84428d-fbb8-4f39-bafa-aea65d396100
+
 *(Gameplay of me against the trained model)*
 
 ## System Architecture
@@ -15,10 +16,12 @@ https://github.com/user-attachments/assets/3f84428d-fbb8-4f39-bafa-aea65d396100
 * **Behavioral Cloning:** Bypassed reward sparsity by utilizing supervised Imitation Learning, mapping expert human/bot states to discrete actions.
 
 https://github.com/user-attachments/assets/5ae1b8ff-a6f1-4eba-9e31-e331a507562a
+
 *(The model learning how to play in the environment)*
 
 
 https://github.com/user-attachments/assets/80d4076e-d6a0-407b-9567-316e4a94bab4
+
 *(The model learning how to play based on an expert bots movements, i.e., behavioral cloning)*
 
 ## Quick Start
