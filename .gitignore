@@ -1,2 +1,6 @@
-lightning_main.py
-*/__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+scripts\lightning_main.py
